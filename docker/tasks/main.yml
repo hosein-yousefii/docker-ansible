@@ -1,0 +1,65 @@
+---
+
+- name: "Pre-check:  if docker is installed"
+  command: "which docker"
+  register: package_check
+  ignore_errors: true
+
+- name: "Pre-check:  if docker compose is installed"
+  command: "which docker-compose"
+  register: compose_check
+  ignore_errors: true
+  when: package_check is succeeded
+
+
+- name: "Pre-check: end host if Docker is already installed or it's not forced"
+  meta: end_host
+  when:
+  - package_check is succeeded
+  - compose_check is succeeded
+  - (lookup('env', 'ANSIBLE_DOCKER_FORCE_INSTALL') | default('False', True) == 'False')
+  - (lookup('env', 'ANSIBLE_DOCKER_UPDATE') | default('False', True) == 'False')
+  - (lookup('env', 'ANSIBLE_DOCKER_COMPOSE_FORCE_INSTALL') | default('False', True) == 'False')
+  - (lookup('env', 'ANSIBLE_DOCKER_COMPOSE_UPDATE') | default('False', True) == 'False')
+
+
+- name: upgrade docker
+  import_tasks: upgrade_docker.yml
+  when: 
+  - package_check is succeeded
+  - (lookup('env', 'ANSIBLE_DOCKER_UPDATE') | default('False', True) == 'True')
+
+- name: install docker on ubuntu
+  import_tasks: install_ubuntu.yml
+  when:
+  - (package_check is failed) or 
+    (lookup('env', 'ANSIBLE_DOCKER_FORCE_INSTALL') | default('False', True) == 'True')
+  - ansible_facts['os_family'] == "Debian"
+
+- name: install docker on centos
+  import_tasks: install_centos.yml
+  when:
+  - (package_check is failed) or 
+    (lookup('env', 'ANSIBLE_DOCKER_FORCE_INSTALL') | default('False', True) == 'True')
+  - ansible_facts['os_family'] == "RedHat"
+
+- name: post installation
+  import_tasks: post_installation.yml
+  when:
+  - (package_check is failed) or 
+    (lookup('env', 'ANSIBLE_DOCKER_FORCE_INSTALL') | default('False', True) == 'True')
+  - (installing_centos is succeeded) or (installing_ubuntu is succeeded)
+
+- name: install docker compose
+  import_tasks: install_compose.yml
+  when:
+  - (package_check is succeeded) or (installing_centos is succeeded) or (installing_ubuntu is succeeded)
+  - (lookup('env', 'ANSIBLE_DOCKER_COMPOSE_FORCE_INSTALL') | default('False', True) == 'True') or 
+    (compose_check is failed)
+
+- name: upgrade docker compose
+  import_tasks: upgrade_compose.yml
+  when:
+  - (package_check is succeeded) or (installing_centos is succeeded) or (installing_ubuntu is succeeded)
+  - (lookup('env', 'ANSIBLE_DOCKER_COMPOSE_UPDATE') | default('False', True) == 'True')
+

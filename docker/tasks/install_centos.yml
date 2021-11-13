@@ -1,0 +1,27 @@
+---
+
+- name: "installing docker on centos: dependency packages"
+  package:
+    state: latest
+    name:
+      - yum-utils
+  register: dep_pkg
+
+- name: "installing docker on centos: add docker repository"
+  script:
+    cmd: ./files/centos_repo.sh
+    chdir: /etc/
+  register: repo
+  when:
+  - dep_pkg is succeeded
+
+- name: "installing docker on centos: docker packages"
+  yum:
+    pkg:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    state: latest
+  register: installing_centos
+  when:
+  - repo is succeeded

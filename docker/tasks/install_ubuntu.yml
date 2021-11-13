@@ -1,0 +1,33 @@
+---
+
+
+- name: "installing docker on ubuntu:  dependency packages"
+  package:
+    state: latest
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+  register: dep_pkg
+
+- name: "installing docker on ubuntu: add docker repository"
+  script:
+    cmd: ./files/ubuntu_repo.sh
+    chdir: /etc/apt/
+  register: config_repo
+  when:
+  - dep_pkg is succeeded
+
+- name: "installing docker on ubuntu: docker packages"
+  apt:
+    pkg:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    state: latest
+    update_cache: true
+  register: installing_ubuntu
+  when:
+  - config_repo is succeeded
+

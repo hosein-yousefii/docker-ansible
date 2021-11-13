@@ -1,0 +1,8 @@
+---
+
+- name: "Post installation: add live-restore feature"
+  script:
+    cmd: ./files/config-daemon.sh
+    chdir: /etc
+  register: config_daemon
+  notify: reload

@@ -1,0 +1,39 @@
+---
+
+- name: "Upgrading docker: check if live-restore is already enabled"
+  shell: "docker info | grep -i 'live restore enabled: true'"
+  ignore_errors: true
+  register: live_restore
+
+- name: "Upgrading docker: add live-restore feature"
+  script: 
+    cmd: ./files/config-daemon.sh
+    chdir: /etc/docker
+  register: config_daemon
+  when:
+  - live_restore is failed
+
+- name: "Upgrading docker: reload docker service"
+  systemd:
+    state: reloaded
+    name: docker
+  register: reload_docker
+  when:
+  - live_restore is failed
+  - config_daemon is succeeded
+
+- name: "Upgrading docker:: check if live-restore is already enabled"
+  shell: "docker info | grep -i 'live restore enabled: true'"
+  ignore_errors: true
+  register: live_migrate
+
+- name: "Upgrading docker: docker packages"
+  package:
+    state: latest
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+  when:
+  - live_migrate is succeeded
+
