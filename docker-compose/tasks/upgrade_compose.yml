@@ -1,0 +1,17 @@
+---
+
+- name: "upgrading docker_compose: removing docker_compose"
+  pip:
+    executable: pip3
+    state: absent
+    name:
+      - docker-compose
+  register: remove_compose
+
+- name: "upgrading docker_compose: installing docker_compose"
+  pip:
+    executable: pip3
+    state: latest
+    name:
+      - docker-compose
+  when: remove_compose is succeeded

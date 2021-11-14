@@ -1,0 +1,27 @@
+---
+
+- name: "Pre-check:  if docker compose is installed"
+  command: "which docker-compose"
+  register: compose_check
+  ignore_errors: true
+  when: package_check is succeeded
+
+
+- name: "Pre-check: end host if Docker compose is already installed or it's not forced"
+  meta: end_host
+  when:
+  - compose_check is succeeded
+  - (lookup('env', 'ANSIBLE_DOCKER_COMPOSE_FORCE_INSTALL') | default('False', True) == 'False')
+  - (lookup('env', 'ANSIBLE_DOCKER_COMPOSE_UPDATE') | default('False', True) == 'False')
+
+- name: install docker compose
+  import_tasks: install_compose.yml
+  when:
+  - (lookup('env', 'ANSIBLE_DOCKER_COMPOSE_FORCE_INSTALL') | default('False', True) == 'True') or 
+    (compose_check is failed)
+
+- name: upgrade docker compose
+  import_tasks: upgrade_compose.yml
+  when:
+  - (lookup('env', 'ANSIBLE_DOCKER_COMPOSE_UPDATE') | default('False', True) == 'True')
+  - compose_check is succeeded
