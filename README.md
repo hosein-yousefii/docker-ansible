@@ -63,4 +63,3 @@ Currently, it works with Centos and Ubuntu (centos7 and ubuntu20 is tested), you
 
 Copyright 2021 Hosein Yousefi <yousefi.hosein.o@gmail.com>
 
-[@dwsclass](https://github.com/dwsclass) dws-ops-002-ansible
