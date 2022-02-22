@@ -1,6 +1,6 @@
 # docker-ansible
 [![GitHub license](https://img.shields.io/github/license/hosein-yousefii/docker-ansible)](https://github.com/hosein-yousefii/docker-ansible/blob/master/LICENSE)
-![LinkedIn](https://shields.io/badge/style-hoseinyousefii-black?logo=linkedin&label=LinkedIn&link=https://www.linkedin.com/in/hoseinyousefi)
+![LinkedIn](https://shields.io/badge/style-hoseinyousefi-black?logo=linkedin&label=LinkedIn&link=https://www.linkedin.com/in/hoseinyousefi)
 
 
 Nowadays, Installing and upgrading docker is neccesary and it's a time consuming task when there are lots of servers.
@@ -62,3 +62,4 @@ ansible-playbook -i hosts.ini docker.yml
 Currently, it works with Centos and Ubuntu (centos7 and ubuntu20 is tested), you can add other distributions or other feautures which can be useful.
 
 Copyright 2021 Hosein Yousefi <yousefi.hosein.o@gmail.com>
+
