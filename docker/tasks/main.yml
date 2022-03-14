@@ -9,7 +9,6 @@
   meta: end_host
   when:
   - package_check is succeeded
-  - compose_check is succeeded
   - (lookup('env', 'ANSIBLE_DOCKER_FORCE_INSTALL') | default('False', True) == 'False')
   - (lookup('env', 'ANSIBLE_DOCKER_UPDATE') | default('False', True) == 'False')
 
