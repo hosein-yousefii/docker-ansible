@@ -53,6 +53,8 @@ After configuring the **docker.yml** file, you can create your **hosts.ini**. (t
 Then you can play the roles:
 
 ```bash
+apt install -y python3-pip
+pip3 install -y ansible
 ansible-playbook -i hosts.ini docker.yml
 ```
 
