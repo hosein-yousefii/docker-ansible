@@ -54,7 +54,7 @@ Then you can play the roles:
 
 ```bash
 apt install -y python3-pip
-pip3 install -y ansible
+pip3 install ansible
 ansible-playbook -i hosts.ini docker.yml
 ```
 
